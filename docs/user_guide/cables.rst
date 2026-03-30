@@ -1,7 +1,7 @@
 Cable Models
 ============
 
-Thermal FEM represents cables as concentric cylindrical layers from the
+Thermal Cable Model represents cables as concentric cylindrical layers from the
 conductor outward.  Each layer has a material, inner radius, and outer
 radius.  The :class:`~thermal_cable_model.Cable` class computes thermal resistances
 and heat losses from this geometry.

@@ -3,7 +3,7 @@ Parallel Cable Installations
 
 When multiple cables are buried near each other, each cable raises the soil
 temperature in its vicinity, increasing the operating temperature of its
-neighbours.  Thermal FEM accounts for this *mutual heating* automatically
+neighbours.  Thermal Cable Model accounts for this *mutual heating* automatically
 when multiple cables are added to a :class:`~thermal_cable_model.CableInstallation`.
 
 Setting up parallel cables

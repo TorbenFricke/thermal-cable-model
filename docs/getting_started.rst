@@ -8,7 +8,7 @@ transient simulation, to inspecting and plotting the results.
 Step 1: Define a cable
 ----------------------
 
-Thermal FEM includes factory methods for common cable constructions.  A
+Thermal Cable Model includes factory methods for common cable constructions.  A
 single-core 240 mm\ :sup:`2` copper XLPE cable rated at 20 kV is created with:
 
 .. code-block:: python

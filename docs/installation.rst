@@ -4,7 +4,7 @@ Installation
 Requirements
 ------------
 
-Thermal FEM requires **Python 3.9** or later and the following packages:
+Thermal Cable Model requires **Python 3.9** or later and the following packages:
 
 - `NumPy <https://numpy.org>`_ >= 1.24
 - `SciPy <https://scipy.org>`_ >= 1.10

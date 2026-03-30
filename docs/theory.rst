@@ -2,7 +2,7 @@ Theory and Physics
 ==================
 
 This section summarises the physical models and numerical methods implemented
-in Thermal FEM.  For full details, consult the referenced standards.
+in Thermal Cable Model.  For full details, consult the referenced standards.
 
 Cable thermal network (IEC 60287 / IEC 60853)
 ----------------------------------------------

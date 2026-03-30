@@ -1,7 +1,7 @@
 User Guide
 ==========
 
-This section covers the main modelling concepts in Thermal FEM and how to
+This section covers the main modelling concepts in Thermal Cable Model and how to
 use each component of the library.
 
 .. toctree::

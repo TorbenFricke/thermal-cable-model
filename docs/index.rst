@@ -1,9 +1,9 @@
-Thermal FEM
-===========
+Thermal Cable Model
+===================
 
 **Cable thermal rating analysis for buried power cables.**
 
-Thermal FEM is a Python library for computing the temperature of buried
+Thermal Cable Model is a Python library for computing the temperature of buried
 low-voltage and medium-voltage power cables under steady-state and transient
 loading conditions.  It implements the lumped-parameter thermal network approach
 from IEC 60287 / IEC 60853.

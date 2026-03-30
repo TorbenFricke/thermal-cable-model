@@ -1,7 +1,7 @@
 API Reference
 =============
 
-Complete reference for all public classes and functions in Thermal FEM.
+Complete reference for all public classes and functions in Thermal Cable Model.
 
 .. toctree::
    :maxdepth: 2

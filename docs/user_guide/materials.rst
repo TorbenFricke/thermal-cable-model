@@ -1,7 +1,7 @@
 Materials
 =========
 
-Thermal FEM includes a built-in database of thermal material properties
+Thermal Cable Model includes a built-in database of thermal material properties
 sourced from IEC 60287-2-1 and standard reference tables.  All quantities
 are in SI units.
 

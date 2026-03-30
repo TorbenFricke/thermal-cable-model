@@ -1,7 +1,7 @@
 Visualisation
 =============
 
-Thermal FEM provides three plotting functions that produce publication-ready
+Thermal Cable Model provides two plotting functions that produce publication-ready
 Matplotlib figures.
 
 Temperature history

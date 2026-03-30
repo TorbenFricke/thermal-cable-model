@@ -2,7 +2,7 @@ Examples
 ========
 
 The ``examples/`` directory contains ready-to-run scripts demonstrating the
-main capabilities of Thermal FEM.  Each script produces console output and
+main capabilities of Thermal Cable Model.  Each script produces console output and
 saves one or more PNG plots.
 
 .. toctree::

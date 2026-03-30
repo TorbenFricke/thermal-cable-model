@@ -1,8 +1,8 @@
-"""Sphinx configuration for Thermal FEM documentation."""
+"""Sphinx configuration for Thermal Cable Model documentation."""
 
-project = "Thermal FEM"
-copyright = "2025, Thermal FEM Contributors"
-author = "Thermal FEM Contributors"
+project = "Thermal Cable Model"
+copyright = "2025, Thermal Cable Model Contributors"
+author = "Thermal Cable Model Contributors"
 release = "0.1.0"
 version = "0.1"
 
@@ -20,8 +20,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
-html_title = "Thermal FEM"
-html_short_title = "Thermal FEM"
+html_title = "Thermal Cable Model"
+html_short_title = "Thermal Cable Model"
 
 autodoc_member_order = "bysource"
 autodoc_typehints = "description"

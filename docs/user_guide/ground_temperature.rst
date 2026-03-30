@@ -2,7 +2,7 @@ Ground Temperature Models
 =========================
 
 The undisturbed ground temperature serves as the far-field thermal boundary
-condition for the cable thermal network.  Thermal FEM provides two models.
+condition for the cable thermal network.  Thermal Cable Model provides two models.
 
 Constant temperature
 --------------------
