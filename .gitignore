@@ -31,3 +31,4 @@ docs/_build/
 
 # Generated plots
 *.png
+!docs/_static/**/*.png

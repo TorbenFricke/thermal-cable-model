@@ -12,4 +12,5 @@ saves one or more PNG plots.
    parallel_cables
    crossing_cables
    seasonal_dynamic
+   seasonal_liander_trefoil_al
    flat_vs_trefoil
