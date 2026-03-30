@@ -135,15 +135,8 @@ class TestTransientConvergence:
                 f"t={self.TIMES_S[i-1]}s ({dTs[i-1]:.6f})"
             )
 
-    @pytest.mark.xfail(
-        reason="Transient uses E₁ (2D line-source Green's function) while "
-               "steady-state uses 1/r (3D point-source). The transient "
-               "converges to a different — higher — limit.",
-        strict=True,
-    )
     def test_bounded_by_steady_state(self, standard_crossing, lv_cable):
-        """Physically, a step-on transient must stay ≤ the steady-state.
-        This test documents the Green's function mismatch in the model."""
+        """Physically, a step-on transient must stay ≤ the steady-state."""
         W = lv_cable.total_heat_per_length(I_LV, 55.0)
         dT_ss = standard_crossing.temperature_rise_at_upper(W)
         for t in self.TIMES_S:
@@ -457,16 +450,9 @@ class TestReciprocity:
 
 
 class TestTransientStrictlyBelowSteadyState:
-    """The E₁-based transient solution must stay strictly below the
-    1/r-based steady-state for any finite time.
-
-    NOTE: The current model uses E₁ (2D line-source Green's function)
-    for the transient but 1/r (3D point-source) for steady-state.
-    These converge to different limits, so the transient eventually
-    overshoots the steady-state.  Tests are marked xfail to document
-    this inconsistency — they will pass automatically if the model is
-    corrected to use matched Green's functions.
-    """
+    """The transient solution must stay strictly below the steady-state
+    for any finite time.  Both use matched 3-D Green's functions
+    (erfc/r for transient, 1/r for steady-state)."""
 
     CONFIGS = [
         (0.9, 1.2, 60),
@@ -476,11 +462,6 @@ class TestTransientStrictlyBelowSteadyState:
         (0.6, 2.0, 75),
     ]
 
-    @pytest.mark.xfail(
-        reason="Transient (E₁) and steady-state (1/r) Green's functions are "
-               "inconsistent — transient converges to a higher limit.",
-        strict=True,
-    )
     @pytest.mark.parametrize("d_up, d_low, angle", CONFIGS)
     def test_never_exceeds_steady_state(self, mv_cable, lv_cable, d_up, d_low, angle):
         W = lv_cable.total_heat_per_length(I_LV, 55.0)
@@ -725,11 +706,6 @@ class TestTransientMonotonicBothCables:
         for i in range(1, len(dTs)):
             assert dTs[i] >= dTs[i - 1] - 1e-6
 
-    @pytest.mark.xfail(
-        reason="Transient (E₁) and steady-state (1/r) Green's functions are "
-               "inconsistent — transient converges to a higher limit.",
-        strict=True,
-    )
     def test_lower_cable_bounded(self, standard_crossing, mv_cable):
         W = mv_cable.total_heat_per_length(I_MV, 70.0)
         dT_ss = standard_crossing.temperature_rise_at_lower(W)
