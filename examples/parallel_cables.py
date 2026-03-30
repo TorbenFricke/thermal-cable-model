@@ -9,12 +9,12 @@ matplotlib.use("Agg")
 
 import numpy as np
 
-from thermal_fem.cable import Cable
-from thermal_fem.ground import KasudaModel
-from thermal_fem.loads import LoadProfile
-from thermal_fem.materials import SOIL_WET
-from thermal_fem.simulation import CableInstallation, ThermalSimulation
-from thermal_fem.visualization import plot_temperature_history, plot_cross_section
+from thermal_cable_model.cable import Cable
+from thermal_cable_model.ground import KasudaModel
+from thermal_cable_model.loads import LoadProfile
+from thermal_cable_model.materials import SOIL_WET
+from thermal_cable_model.simulation import CableInstallation, ThermalSimulation
+from thermal_cable_model.visualization import plot_temperature_history, plot_cross_section
 
 
 def main():

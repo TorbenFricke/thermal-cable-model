@@ -3,9 +3,9 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "thermal_fem"
+name = "thermal_cable_model"
 version = "0.1.0"
-description = "Cable thermal rating and 2-D FEM temperature field analysis"
+description = "Cable thermal rating analysis for buried power cables"
 requires-python = ">=3.9"
 dependencies = [
     "numpy",
@@ -14,4 +14,4 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["thermal_fem*"]
+include = ["thermal_cable_model*"]

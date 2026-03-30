@@ -5,8 +5,8 @@ Thermal FEM includes a built-in database of thermal material properties
 sourced from IEC 60287-2-1 and standard reference tables.  All quantities
 are in SI units.
 
-The :class:`~thermal_fem.ThermalMaterial` class
-------------------------------------------------
+The :class:`~thermal_cable_model.ThermalMaterial` class
+-------------------------------------------------------
 
 Each material is described by:
 
@@ -31,11 +31,11 @@ The derived property :attr:`thermal_diffusivity` is computed as
 α = λ / (ρ\ :sub:`m` · c\ :sub:`p`).
 
 You can create a custom material using the
-:meth:`~thermal_fem.ThermalMaterial.from_conductivity` class method:
+:meth:`~thermal_cable_model.ThermalMaterial.from_conductivity` class method:
 
 .. code-block:: python
 
-   from thermal_fem import ThermalMaterial
+   from thermal_cable_model import ThermalMaterial
 
    my_soil = ThermalMaterial.from_conductivity(
        name="Sandy soil",
@@ -141,13 +141,13 @@ Other
 
 ``AIR_STILL`` (λ = 0.025 W/(m·K)) — for duct installations.
 
-The :data:`~thermal_fem.MATERIALS` dictionary
-----------------------------------------------
+The :data:`~thermal_cable_model.MATERIALS` dictionary
+------------------------------------------------------
 
 All built-in materials are also available as a name-keyed dictionary:
 
 .. code-block:: python
 
-   from thermal_fem import MATERIALS
+   from thermal_cable_model import MATERIALS
 
    soil = MATERIALS["Standard soil (ρ=1.0)"]

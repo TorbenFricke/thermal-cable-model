@@ -1,7 +1,7 @@
-:mod:`thermal_fem.crossing` — Cable Crossings
-==============================================
+:mod:`thermal_cable_model.crossing` — Cable Crossings
+======================================================
 
-.. automodule:: thermal_fem.crossing
+.. automodule:: thermal_cable_model.crossing
    :members:
    :undoc-members:
    :show-inheritance:

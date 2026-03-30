@@ -21,7 +21,7 @@ Clone the repository and install in editable (development) mode:
    cd thermal-fem
    pip install -e .
 
-This installs ``thermal_fem`` as an editable package so that changes to the
+This installs ``thermal_cable_model`` as an editable package so that changes to the
 source code are reflected immediately.
 
 Install dependencies only
@@ -58,8 +58,8 @@ After installation, verify that the package loads correctly:
 
 .. code-block:: python
 
-   import thermal_fem
-   print(thermal_fem.__version__)
+   import thermal_cable_model
+   print(thermal_cable_model.__version__)
    # 0.1.0
 
 You can also run the test suite (requires `pytest <https://pytest.org>`_):

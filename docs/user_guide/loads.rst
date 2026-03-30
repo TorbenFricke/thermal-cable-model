@@ -1,7 +1,7 @@
 Load Profiles
 =============
 
-The :class:`~thermal_fem.LoadProfile` class defines the time-varying RMS
+The :class:`~thermal_cable_model.LoadProfile` class defines the time-varying RMS
 current flowing through a cable.  Internally it stores time-stamped
 current values and performs piecewise-linear interpolation.
 
@@ -10,7 +10,7 @@ Constant load
 
 .. code-block:: python
 
-   from thermal_fem import LoadProfile
+   from thermal_cable_model import LoadProfile
 
    load = LoadProfile.constant(current_a=400.0, duration_s=48 * 3600)
 

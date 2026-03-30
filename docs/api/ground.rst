@@ -1,7 +1,7 @@
-:mod:`thermal_fem.ground` — Ground Temperature Models
-=====================================================
+:mod:`thermal_cable_model.ground` — Ground Temperature Models
+==============================================================
 
-.. automodule:: thermal_fem.ground
+.. automodule:: thermal_cable_model.ground
    :members:
    :undoc-members:
    :show-inheritance:

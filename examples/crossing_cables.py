@@ -13,12 +13,12 @@ matplotlib.use("Agg")
 import numpy as np
 import matplotlib.pyplot as plt
 
-from thermal_fem.cable import Cable
-from thermal_fem.crossing import CableCrossing, crossing_derating_factor
-from thermal_fem.ground import KasudaModel
-from thermal_fem.loads import LoadProfile
-from thermal_fem.materials import SOIL_STANDARD
-from thermal_fem.simulation import CableInstallation, ThermalSimulation
+from thermal_cable_model.cable import Cable
+from thermal_cable_model.crossing import CableCrossing, crossing_derating_factor
+from thermal_cable_model.ground import KasudaModel
+from thermal_cable_model.loads import LoadProfile
+from thermal_cable_model.materials import SOIL_STANDARD
+from thermal_cable_model.simulation import CableInstallation, ThermalSimulation
 
 
 def main():

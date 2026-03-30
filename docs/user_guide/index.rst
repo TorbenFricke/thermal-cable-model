@@ -13,5 +13,4 @@ use each component of the library.
    ground_temperature
    parallel_cables
    crossings
-   fem
    visualization

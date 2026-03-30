@@ -21,8 +21,8 @@ What it demonstrates
 --------------------
 
 1. Creating a cable with :meth:`Cable.single_core_xlpe_cu
-   <thermal_fem.Cable.single_core_xlpe_cu>`
-2. Setting up a :class:`~thermal_fem.KasudaModel` for seasonal ground
+   <thermal_cable_model.Cable.single_core_xlpe_cu>`
+2. Setting up a :class:`~thermal_cable_model.KasudaModel` for seasonal ground
    temperature variation
 3. Running a **steady-state** analysis at mid-summer (day 200)
 4. Running a **year-long transient** at 1-hour time steps

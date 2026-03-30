@@ -19,7 +19,7 @@ Setup
 What it demonstrates
 --------------------
 
-1. Using :meth:`LoadProfile.daily_pattern <thermal_fem.LoadProfile.daily_pattern>`
+1. Using :meth:`LoadProfile.daily_pattern <thermal_cable_model.LoadProfile.daily_pattern>`
    for year-long simulations
 2. Interaction between daily load cycling and seasonal ambient variation
 3. Identifying the day and season when the peak conductor temperature occurs

@@ -1,7 +1,7 @@
-:mod:`thermal_fem.solver` — Transient Solver
-============================================
+:mod:`thermal_cable_model.solver` — Transient Solver
+=====================================================
 
-.. automodule:: thermal_fem.solver
+.. automodule:: thermal_cable_model.solver
    :members:
    :undoc-members:
    :show-inheritance:

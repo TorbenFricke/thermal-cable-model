@@ -1,7 +1,7 @@
-:mod:`thermal_fem.cable` — Cable Definitions
-=============================================
+:mod:`thermal_cable_model.cable` — Cable Definitions
+=====================================================
 
-.. automodule:: thermal_fem.cable
+.. automodule:: thermal_cable_model.cable
    :members:
    :undoc-members:
    :show-inheritance:

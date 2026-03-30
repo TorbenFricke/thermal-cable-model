@@ -1,17 +1,16 @@
 Thermal FEM
 ===========
 
-**Cable thermal rating and temperature field analysis for buried power cables.**
+**Cable thermal rating analysis for buried power cables.**
 
 Thermal FEM is a Python library for computing the temperature of buried
 low-voltage and medium-voltage power cables under steady-state and transient
 loading conditions.  It implements the lumped-parameter thermal network approach
-from IEC 60287 / IEC 60853 together with a 2-D finite-element solver for
-visualising the soil temperature field around cable installations.
+from IEC 60287 / IEC 60853.
 
 .. code-block:: python
 
-   from thermal_fem import Cable, CableInstallation, ThermalSimulation, LoadProfile
+   from thermal_cable_model import Cable, CableInstallation, ThermalSimulation, LoadProfile
 
    cable = Cable.single_core_xlpe_cu(240, voltage_class="MV")
    inst = CableInstallation()
@@ -30,7 +29,6 @@ Key Features
 - **Parallel cables** with mutual heating (IEC 60287 image method)
 - **Cable crossings** at arbitrary angles with derating factors (CIGRE TB 640)
 - **Transient solver** — implicit Euler with Picard iteration for temperature-dependent resistance
-- **2-D FEM solver** for soil temperature field visualisation on graded Q4 meshes
 
 .. toctree::
    :maxdepth: 2

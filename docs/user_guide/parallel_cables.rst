@@ -4,7 +4,7 @@ Parallel Cable Installations
 When multiple cables are buried near each other, each cable raises the soil
 temperature in its vicinity, increasing the operating temperature of its
 neighbours.  Thermal FEM accounts for this *mutual heating* automatically
-when multiple cables are added to a :class:`~thermal_fem.CableInstallation`.
+when multiple cables are added to a :class:`~thermal_cable_model.CableInstallation`.
 
 Setting up parallel cables
 --------------------------
@@ -13,8 +13,8 @@ Add cables at different horizontal positions (``x``) and burial depths:
 
 .. code-block:: python
 
-   from thermal_fem import Cable, CableInstallation, ThermalSimulation, LoadProfile
-   from thermal_fem.materials import SOIL_STANDARD
+   from thermal_cable_model import Cable, CableInstallation, ThermalSimulation, LoadProfile
+   from thermal_cable_model.materials import SOIL_STANDARD
 
    cable = Cable.single_core_xlpe_cu(240, voltage_class="MV")
 
@@ -77,12 +77,12 @@ sharing the same trench:
 Cross-section visualisation
 ---------------------------
 
-Use :func:`~thermal_fem.visualization.plot_cross_section` to visualise the
+Use :func:`~thermal_cable_model.visualization.plot_cross_section` to visualise the
 cable arrangement and annotate temperatures:
 
 .. code-block:: python
 
-   from thermal_fem.visualization import plot_cross_section
+   from thermal_cable_model.visualization import plot_cross_section
 
    fig = plot_cross_section(
        positions_x=[-0.3, 0.0, 0.3],

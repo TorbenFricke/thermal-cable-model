@@ -10,7 +10,6 @@ Cable temperature rating model for buried LV and MV power cables.
 - Cable crossings at arbitrary angles with derating
 - Multi-layer cable models with factory methods
 - Temperature outputs: conductor, insulation, cable surface, near-cable soil
-- 2-D FEM solver for soil temperature field visualization
 
 ## Installation
 
@@ -22,7 +21,7 @@ Cable temperature rating model for buried LV and MV power cables.
 - examples/parallel_cables.py: Three parallel cables with different load profiles
 - examples/crossing_cables.py: MV over LV crossing at 60 degrees with derating
 - examples/seasonal_dynamic.py: Year-long daily load pattern with seasonal variation
-- examples/fem_temperature_field.py: 2-D soil temperature field around two cables
+- examples/flat_vs_trefoil.py: Flat vs trefoil formation comparison
 
 ## Physics
 
@@ -33,7 +32,6 @@ Cable temperature rating model for buried LV and MV power cables.
 - Transient solver: implicit Euler with Picard iteration for R(T)
 - Cable crossings: line-source integration per CIGRE TB 640
 - Ground temperature: Kasuda and Archenbach (1965) equation
-- 2-D soil field: Q4 bilinear FEM on graded Cartesian mesh
 
 ## References
 

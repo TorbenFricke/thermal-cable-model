@@ -11,10 +11,10 @@ import math
 import numpy as np
 import pytest
 
-from thermal_fem.cable import Cable
-from thermal_fem.crossing import CableCrossing, crossing_derating_factor
-from thermal_fem.materials import SOIL_STANDARD, ThermalMaterial
-from thermal_fem.thermal_network import mutual_heating_resistance
+from thermal_cable_model.cable import Cable
+from thermal_cable_model.crossing import CableCrossing, crossing_derating_factor
+from thermal_cable_model.materials import SOIL_STANDARD, ThermalMaterial
+from thermal_cable_model.thermal_network import mutual_heating_resistance
 
 
 # ── Shared fixtures ───────────────────────────────────────────────────
@@ -355,9 +355,9 @@ class TestSoilConductivityEffect:
 class TestSuperpositionEndToEnd:
     def test_crossing_always_raises_temperature(self, mv_cable, lv_cable):
         """Full workflow: isolated sims + analytical crossing superposition."""
-        from thermal_fem.ground import KasudaModel
-        from thermal_fem.loads import LoadProfile
-        from thermal_fem.simulation import CableInstallation, ThermalSimulation
+        from thermal_cable_model.ground import KasudaModel
+        from thermal_cable_model.loads import LoadProfile
+        from thermal_cable_model.simulation import CableInstallation, ThermalSimulation
 
         crossing = CableCrossing(
             cable_upper=mv_cable, cable_lower=lv_cable,

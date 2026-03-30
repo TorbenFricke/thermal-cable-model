@@ -1,7 +1,7 @@
-:mod:`thermal_fem.visualization` — Plotting Utilities
-=====================================================
+:mod:`thermal_cable_model.visualization` — Plotting Utilities
+==============================================================
 
-.. automodule:: thermal_fem.visualization
+.. automodule:: thermal_cable_model.visualization
    :members:
    :undoc-members:
    :show-inheritance:

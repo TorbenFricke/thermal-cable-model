@@ -3,7 +3,7 @@ Cable Models
 
 Thermal FEM represents cables as concentric cylindrical layers from the
 conductor outward.  Each layer has a material, inner radius, and outer
-radius.  The :class:`~thermal_fem.Cable` class computes thermal resistances
+radius.  The :class:`~thermal_cable_model.Cable` class computes thermal resistances
 and heat losses from this geometry.
 
 Factory methods
@@ -20,16 +20,16 @@ cross-sectional area:
    * - Method
      - Construction
      - Default voltage
-   * - :meth:`Cable.single_core_xlpe_cu <thermal_fem.Cable.single_core_xlpe_cu>`
+   * - :meth:`Cable.single_core_xlpe_cu <thermal_cable_model.Cable.single_core_xlpe_cu>`
      - 1-core Cu / XLPE / PE jacket
      - MV (20 kV)
-   * - :meth:`Cable.single_core_xlpe_al <thermal_fem.Cable.single_core_xlpe_al>`
+   * - :meth:`Cable.single_core_xlpe_al <thermal_cable_model.Cable.single_core_xlpe_al>`
      - 1-core Al / XLPE / PE jacket
      - MV (20 kV)
-   * - :meth:`Cable.three_core_xlpe_cu <thermal_fem.Cable.three_core_xlpe_cu>`
+   * - :meth:`Cable.three_core_xlpe_cu <thermal_cable_model.Cable.three_core_xlpe_cu>`
      - 3-core Cu / XLPE / SWA
      - LV (0.6 kV)
-   * - :meth:`Cable.three_core_pvc_cu <thermal_fem.Cable.three_core_pvc_cu>`
+   * - :meth:`Cable.three_core_pvc_cu <thermal_cable_model.Cable.three_core_pvc_cu>`
      - 3-core Cu / PVC / SWA
      - LV (0.6 kV)
 
@@ -37,7 +37,7 @@ Example:
 
 .. code-block:: python
 
-   from thermal_fem import Cable
+   from thermal_cable_model import Cable
 
    mv_cable = Cable.single_core_xlpe_cu(240, voltage_class="MV", voltage_kv=20.0)
    lv_cable = Cable.three_core_xlpe_cu(150, voltage_class="LV", voltage_kv=0.6)
@@ -53,8 +53,8 @@ layer:
 
 .. code-block:: python
 
-   from thermal_fem import Cable, CableLayer
-   from thermal_fem.materials import COPPER, XLPE, LEAD_SHEATH, PVC_JACKET
+   from thermal_cable_model import Cable, CableLayer
+   from thermal_cable_model.materials import COPPER, XLPE, LEAD_SHEATH, PVC_JACKET
 
    layers = [
        CableLayer(XLPE, inner_radius=8.74e-3, outer_radius=16.74e-3),

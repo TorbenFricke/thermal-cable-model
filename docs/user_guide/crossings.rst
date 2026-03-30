@@ -3,7 +3,7 @@ Cable Crossings
 
 When two cable circuits cross at different depths and at an angle, the heat
 from one cable raises the temperature of the other at the crossing point.
-The :class:`~thermal_fem.CableCrossing` class computes this mutual
+The :class:`~thermal_cable_model.CableCrossing` class computes this mutual
 temperature rise using the analytical line-source integration method from
 CIGRE Technical Brochure 640.
 
@@ -12,8 +12,8 @@ Defining a crossing
 
 .. code-block:: python
 
-   from thermal_fem import Cable, CableCrossing
-   from thermal_fem.materials import SOIL_STANDARD
+   from thermal_cable_model import Cable, CableCrossing
+   from thermal_cable_model.materials import SOIL_STANDARD
 
    mv_cable = Cable.single_core_xlpe_cu(240, voltage_class="MV", voltage_kv=20.0)
    lv_cable = Cable.three_core_xlpe_cu(150, voltage_class="LV", voltage_kv=0.6)
@@ -79,12 +79,12 @@ exponential integral E\ :sub:`1`:
 Derating factor
 ---------------
 
-The :func:`~thermal_fem.crossing.crossing_derating_factor` computes how
+The :func:`~thermal_cable_model.crossing.crossing_derating_factor` computes how
 much the cable's permissible current must be reduced due to the crossing:
 
 .. code-block:: python
 
-   from thermal_fem.crossing import crossing_derating_factor
+   from thermal_cable_model.crossing import crossing_derating_factor
 
    df = crossing_derating_factor(mv_cable, depth=0.9, delta_T_crossing=dT_at_mv,
                                  soil=SOIL_STANDARD)
@@ -102,13 +102,13 @@ where :math:`\Delta T_\text{max} = T_\text{max,conductor} - 20\,°\text{C}`.
 Integration with ThermalSimulation
 -----------------------------------
 
-Cable crossings can be registered on a :class:`~thermal_fem.CableInstallation`
+Cable crossings can be registered on a :class:`~thermal_cable_model.CableInstallation`
 and are automatically applied during both steady-state and transient
 simulations:
 
 .. code-block:: python
 
-   from thermal_fem import CableInstallation, ThermalSimulation
+   from thermal_cable_model import CableInstallation, ThermalSimulation
 
    inst = CableInstallation(soil=SOIL_STANDARD)
    inst.add_cable(mv_cable, x=0.0, depth=0.9, load=load_mv)

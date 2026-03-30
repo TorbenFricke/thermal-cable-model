@@ -16,7 +16,6 @@ Initial release.
 - IEC 60853 thermal capacitance with Van Wormer splitting
 - Implicit Euler transient solver with Picard iteration
 - Cable crossing analysis (CIGRE TB 640) with derating factor
-- 2-D finite element solver for soil temperature fields (Q4 elements)
-- Plotting utilities for temperature history, cross-sections, and contour fields
-- Six example scripts covering single cable, parallel cables, crossings,
-  seasonal dynamics, FEM fields, and flat vs trefoil comparisons
+- Plotting utilities for temperature history and cross-sections
+- Five example scripts covering single cable, parallel cables, crossings,
+  seasonal dynamics, and flat vs trefoil comparisons

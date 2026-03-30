@@ -13,7 +13,7 @@ single-core 240 mm\ :sup:`2` copper XLPE cable rated at 20 kV is created with:
 
 .. code-block:: python
 
-   from thermal_fem import Cable
+   from thermal_cable_model import Cable
 
    cable = Cable.single_core_xlpe_cu(240, voltage_class="MV", voltage_kv=20.0)
    print(cable.name)                      # "1×240 mm² Cu XLPE 20 kV"
@@ -31,7 +31,7 @@ simplest case is a constant current:
 
 .. code-block:: python
 
-   from thermal_fem import LoadProfile
+   from thermal_cable_model import LoadProfile
 
    duration = 48 * 3600       # 48 hours in seconds
    load = LoadProfile.constant(400.0, duration)  # 400 A for 48 h
@@ -41,14 +41,14 @@ Other load shapes are available — see :doc:`user_guide/loads`.
 Step 3: Set up the installation
 -------------------------------
 
-A :class:`~thermal_fem.CableInstallation` describes the physical arrangement:
+A :class:`~thermal_cable_model.CableInstallation` describes the physical arrangement:
 cable positions, burial depths, soil properties, and the ground temperature
 model.
 
 .. code-block:: python
 
-   from thermal_fem import CableInstallation, KasudaModel
-   from thermal_fem.materials import SOIL_STANDARD
+   from thermal_cable_model import CableInstallation, KasudaModel
+   from thermal_cable_model.materials import SOIL_STANDARD
 
    ground = KasudaModel(
        mean_surface_temp=10.0,
@@ -63,12 +63,12 @@ model.
 Step 4: Run the simulation
 --------------------------
 
-Wrap the installation in a :class:`~thermal_fem.ThermalSimulation` and run
+Wrap the installation in a :class:`~thermal_cable_model.ThermalSimulation` and run
 either a steady-state or transient analysis:
 
 .. code-block:: python
 
-   from thermal_fem import ThermalSimulation
+   from thermal_cable_model import ThermalSimulation
 
    sim = ThermalSimulation(inst)
 
@@ -87,12 +87,12 @@ Built-in plotting functions create publication-ready figures:
 
 .. code-block:: python
 
-   from thermal_fem import plot_temperature_history
+   from thermal_cable_model import plot_temperature_history
 
    fig = plot_temperature_history(result, time_unit="hours")
    fig.savefig("my_cable_temperatures.png", dpi=150)
 
-The :func:`~thermal_fem.plot_temperature_history` function shows conductor,
+The :func:`~thermal_cable_model.plot_temperature_history` function shows conductor,
 insulation, surface, and soil node temperatures on one axis with an optional
 current panel below.
 
@@ -101,6 +101,5 @@ What next?
 
 - **Multiple cables** — see :doc:`user_guide/parallel_cables`
 - **Cable crossings** — see :doc:`user_guide/crossings`
-- **2-D soil temperature field** — see :doc:`user_guide/fem`
 - **Full API reference** — see :doc:`api/index`
 - **Worked examples** — see :doc:`examples/index`

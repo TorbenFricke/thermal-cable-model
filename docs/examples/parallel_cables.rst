@@ -23,8 +23,8 @@ Setup
 What it demonstrates
 --------------------
 
-1. Adding multiple cables to a :class:`~thermal_fem.CableInstallation`
-2. Using different :class:`~thermal_fem.LoadProfile` types for each cable
+1. Adding multiple cables to a :class:`~thermal_cable_model.CableInstallation`
+2. Using different :class:`~thermal_cable_model.LoadProfile` types for each cable
 3. Mutual heating between parallel cables
 4. Comparing peak temperatures across cables
 5. Cross-section visualisation

@@ -11,17 +11,17 @@ The simplest boundary — a spatially and temporally uniform ambient temperature
 
 .. code-block:: python
 
-   from thermal_fem.ground import ConstantGroundTemperature
+   from thermal_cable_model.ground import ConstantGroundTemperature
 
    ground = ConstantGroundTemperature(temperature_c=15.0)
 
 This is the default when no ground model is specified in
-:class:`~thermal_fem.CableInstallation`.
+:class:`~thermal_cable_model.CableInstallation`.
 
 Kasuda model
 ------------
 
-The :class:`~thermal_fem.KasudaModel` implements the Kasuda & Archenbach
+The :class:`~thermal_cable_model.KasudaModel` implements the Kasuda & Archenbach
 (1965) equation for the undisturbed ground temperature as a function of
 depth and time of year:
 
@@ -45,7 +45,7 @@ Example:
 
 .. code-block:: python
 
-   from thermal_fem import KasudaModel
+   from thermal_cable_model import KasudaModel
 
    ground = KasudaModel(
        mean_surface_temp=10.0,      # °C — central European annual mean
@@ -91,12 +91,12 @@ Choosing parameters
 Custom ground models
 --------------------
 
-Implement the :class:`~thermal_fem.GroundTemperatureModel` abstract base
+Implement the :class:`~thermal_cable_model.GroundTemperatureModel` abstract base
 class to define your own boundary condition:
 
 .. code-block:: python
 
-   from thermal_fem.ground import GroundTemperatureModel
+   from thermal_cable_model.ground import GroundTemperatureModel
 
    class MyGroundModel(GroundTemperatureModel):
        def temperature(self, depth: float, time_s: float) -> float:

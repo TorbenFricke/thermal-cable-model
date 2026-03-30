@@ -12,5 +12,4 @@ saves one or more PNG plots.
    parallel_cables
    crossing_cables
    seasonal_dynamic
-   fem_temperature_field
    flat_vs_trefoil

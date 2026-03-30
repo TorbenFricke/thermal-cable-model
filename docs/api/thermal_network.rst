@@ -1,7 +1,7 @@
-:mod:`thermal_fem.thermal_network` — Thermal Network
-====================================================
+:mod:`thermal_cable_model.thermal_network` — Thermal Network
+=============================================================
 
-.. automodule:: thermal_fem.thermal_network
+.. automodule:: thermal_cable_model.thermal_network
    :members:
    :undoc-members:
    :show-inheritance:

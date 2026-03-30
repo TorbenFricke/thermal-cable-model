@@ -18,10 +18,10 @@ Setup
 What it demonstrates
 --------------------
 
-1. Creating a :class:`~thermal_fem.CableCrossing`
+1. Creating a :class:`~thermal_cable_model.CableCrossing`
 2. Computing steady-state mutual temperature rise
 3. Computing derating factors with
-   :func:`~thermal_fem.crossing.crossing_derating_factor`
+   :func:`~thermal_cable_model.crossing.crossing_derating_factor`
 4. Tabulating the transient temperature rise over time
 5. Running isolated cable simulations and superimposing the crossing effect
 6. Quantifying the temperature difference: isolated vs. with crossing

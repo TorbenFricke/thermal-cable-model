@@ -1,7 +1,7 @@
-:mod:`thermal_fem.materials` — Material Properties
-===================================================
+:mod:`thermal_cable_model.materials` — Material Properties
+==========================================================
 
-.. automodule:: thermal_fem.materials
+.. automodule:: thermal_cable_model.materials
    :members:
    :undoc-members:
    :show-inheritance:

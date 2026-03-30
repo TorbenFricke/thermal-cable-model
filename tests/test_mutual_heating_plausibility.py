@@ -11,12 +11,12 @@ import math
 import numpy as np
 import pytest
 
-from thermal_fem.cable import Cable
-from thermal_fem.ground import ConstantGroundTemperature
-from thermal_fem.loads import LoadProfile
-from thermal_fem.materials import SOIL_STANDARD, ThermalMaterial
-from thermal_fem.simulation import CableInstallation, ThermalSimulation
-from thermal_fem.thermal_network import (
+from thermal_cable_model.cable import Cable
+from thermal_cable_model.ground import ConstantGroundTemperature
+from thermal_cable_model.loads import LoadProfile
+from thermal_cable_model.materials import SOIL_STANDARD, ThermalMaterial
+from thermal_cable_model.simulation import CableInstallation, ThermalSimulation
+from thermal_cable_model.thermal_network import (
     CableThermalNetwork,
     external_thermal_resistance,
     mutual_heating_resistance,

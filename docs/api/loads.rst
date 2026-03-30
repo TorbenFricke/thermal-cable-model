@@ -1,7 +1,7 @@
-:mod:`thermal_fem.loads` — Load Profiles
-========================================
+:mod:`thermal_cable_model.loads` — Load Profiles
+=================================================
 
-.. automodule:: thermal_fem.loads
+.. automodule:: thermal_cable_model.loads
    :members:
    :undoc-members:
    :show-inheritance:

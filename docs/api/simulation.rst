@@ -1,7 +1,7 @@
-:mod:`thermal_fem.simulation` — High-Level Simulation
-=====================================================
+:mod:`thermal_cable_model.simulation` — High-Level Simulation
+==============================================================
 
-.. automodule:: thermal_fem.simulation
+.. automodule:: thermal_cable_model.simulation
    :members:
    :undoc-members:
    :show-inheritance:

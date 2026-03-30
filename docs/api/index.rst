@@ -15,4 +15,3 @@ Complete reference for all public classes and functions in Thermal FEM.
    crossing
    simulation
    visualization
-   fem
