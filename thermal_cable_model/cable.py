@@ -334,6 +334,39 @@ class Cable:
         )
 
 
+def iec_line_capacitance_per_length(
+    relative_permittivity: float,
+    diameter_over_inner_screen_mm: float,
+    diameter_over_insulation_mm: float,
+) -> float:
+    """Line capacitance [F/m], IEC 60287-1-1 §2.2 (form used in CIGRE TB880).
+
+    ``C = (ε_r / (18·ln(D_i / d_c)))·10⁻⁹`` with both diameters in millimetres.
+    """
+    return (
+        relative_permittivity
+        / (
+            18.0
+            * math.log(diameter_over_insulation_mm / diameter_over_inner_screen_mm)
+        )
+    ) * 1e-9
+
+
+def dielectric_loss_per_length(
+    capacitance_f_per_m: float,
+    voltage_kv_phase_to_phase: float,
+    tan_delta: float,
+    frequency_hz: float = 50.0,
+) -> float:
+    """Dielectric loss per unit length [W/m]: ω C U₀² tan δ.
+
+    ``U₀`` is RMS phase voltage [V] from line voltage ``U/√3``.
+    """
+    omega = 2.0 * math.pi * frequency_hz
+    u0_v = voltage_kv_phase_to_phase * 1e3 / math.sqrt(3.0)
+    return omega * capacitance_f_per_m * u0_v**2 * tan_delta
+
+
 # ── private helpers ──────────────────────────────────────────────────
 
 

@@ -145,6 +145,80 @@ def mutual_heating_resistance(
     )
 
 
+def cylindrical_shell_thermal_resistance(
+    thermal_resistivity: float,
+    inner_radius: float,
+    outer_radius: float,
+) -> float:
+    """Radial thermal resistance [K·m/W] of a homogeneous cylindrical shell.
+
+    Same physics as :class:`thermal_cable_model.cable.CableLayer` with constant
+    ρ_th (IEC 60287-2-1 §4.1 cylindrical layer).
+    """
+    if outer_radius <= inner_radius:
+        raise ValueError("outer_radius must exceed inner_radius")
+    if outer_radius - inner_radius < 1e-18:
+        return 0.0
+    return (
+        thermal_resistivity
+        / (2.0 * math.pi)
+        * math.log(outer_radius / inner_radius)
+    )
+
+
+def cylindrical_shell_thermal_resistance_diameters(
+    thermal_resistivity: float,
+    inner_diameter: float,
+    outer_diameter: float,
+) -> float:
+    """Thermal resistance [K·m/W] from ρ/(2π)·ln(D_out/D_in).
+
+    *inner_diameter* and *outer_diameter* may be in any consistent unit.
+    """
+    if outer_diameter <= inner_diameter:
+        raise ValueError("outer_diameter must exceed inner_diameter")
+    return (
+        thermal_resistivity
+        / (2.0 * math.pi)
+        * math.log(outer_diameter / inner_diameter)
+    )
+
+
+def plastic_duct_air_gap_thermal_resistance(
+    cable_outer_diameter_mm: float,
+    theta_max_celsius: float,
+    u_constant: float = 1.87,
+    v_constant: float = 0.312,
+    y_constant: float = 0.0037,
+) -> float:
+    """Thermal resistance of the air space between cable and plastic duct [K·m/W].
+
+    IEC 60287-2-1 Table 4 (plastic duct), as implemented in CIGRE TB880
+    case 2 (touching trefoil in HDPE ducts).
+    """
+    v_y = v_constant + y_constant * theta_max_celsius
+    return u_constant / (1.0 + 0.1 * v_y * cable_outer_diameter_mm)
+
+
+def external_buried_duct_thermal_resistance_tb880_form(
+    burial_depth_to_axis: float,
+    duct_outer_diameter: float,
+    soil_thermal_resistivity: float,
+) -> float:
+    """External thermal resistance of a buried duct [K·m/W], TB880 notebook form.
+
+    Uses T4‴ = ρ/(2π)·(ln(2u) + 2·ln(u)) with u = 2L/D, where *L* is depth to
+    the duct axis and *D* is the duct outer diameter.  All length inputs must
+    share the same unit (e.g. mm or m).
+
+    This is **not** identical to :func:`external_thermal_resistance` for a
+    solid cable (IEC 60287-2-1 §2.2.7 / acosh formulation).
+    """
+    u = 2.0 * burial_depth_to_axis / duct_outer_diameter
+    rho = soil_thermal_resistivity
+    return rho / (2.0 * math.pi) * (math.log(2.0 * u) + 2.0 * math.log(u))
+
+
 # ═══════════════════════════════════════════════════════════════════════
 #  Complete thermal network for a cable group
 # ═══════════════════════════════════════════════════════════════════════

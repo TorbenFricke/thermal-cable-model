@@ -62,6 +62,10 @@ ALUMINUM = ThermalMaterial.from_conductivity(
 XLPE = ThermalMaterial.from_conductivity(
     "XLPE", conductivity=1.0 / 3.5, volumetric_heat_capacity=2.4e6
 )
+# Semi-conducting screens (IEC 60949 / CIGRE guidance; typical ρ_th ≈ 2.5 K·m/W)
+SEMI_CONDUCTING_SCREEN = ThermalMaterial.from_conductivity(
+    "Semi-conducting screen", conductivity=1.0 / 2.5, volumetric_heat_capacity=2.0e6
+)
 PVC = ThermalMaterial.from_conductivity(
     "PVC", conductivity=1.0 / 6.0, volumetric_heat_capacity=1.7e6
 )
@@ -117,7 +121,7 @@ MATERIALS: dict[str, ThermalMaterial] = {
     m.name: m
     for m in [
         COPPER, ALUMINUM,
-        XLPE, PVC, EPR, PAPER_INSULATION,
+        XLPE, SEMI_CONDUCTING_SCREEN, PVC, EPR, PAPER_INSULATION,
         PVC_JACKET, PE_JACKET, POLYPROPYLENE_FILLER,
         LEAD_SHEATH, STEEL_ARMOUR,
         SOIL_DRY, SOIL_WET, SOIL_STANDARD, THERMAL_BACKFILL, CONCRETE_DUCT,
