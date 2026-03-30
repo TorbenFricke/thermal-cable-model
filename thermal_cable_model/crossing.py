@@ -178,21 +178,26 @@ class CableCrossing:
         t: float,
         L: float,
     ) -> float:
-        r"""Transient mutual temperature rise using the exponential integral.
+        r"""Transient mutual temperature rise using the 3-D point-source kernel.
+
+        Each infinitesimal element *ds* of the crossing cable acts as a
+        point source, so the correct transient Green's function is
+        :math:`\operatorname{erfc}(r/2\sqrt{\alpha t}) / r` (not the 2-D
+        line-source kernel E₁).
 
         .. math::
 
             \Delta T(t) = \frac{W}{4\pi\lambda}
                 \int_{-L}^{L}
                 \left[
-                    \text{E}_1\!\left(\frac{r^2}{4\alpha t}\right)
-                  - \text{E}_1\!\left(\frac{{r'}^2}{4\alpha t}\right)
+                    \frac{\operatorname{erfc}\!\bigl(\frac{r}{2\sqrt{\alpha t}}\bigr)}{r}
+                  - \frac{\operatorname{erfc}\!\bigl(\frac{r'}{2\sqrt{\alpha t}}\bigr)}{r'}
                 \right] ds
 
-        where E₁ is the exponential integral, r and r' are distances
-        to the source and its image respectively.
+        As *t* → ∞, erfc → 1 and this recovers the steady-state 1/*r*
+        kernel exactly.
         """
-        from scipy.special import exp1
+        from scipy.special import erfc
         import warnings
 
         if t <= 0:
@@ -203,16 +208,17 @@ class CableCrossing:
         sin_a = math.sin(self.angle_rad)
         dh = abs(depth_source - depth_target)
         h_sum = depth_source + depth_target
-        four_alpha_t = 4.0 * alpha * t
+        two_sqrt_at = 2.0 * math.sqrt(alpha * t)
 
-        # Adaptive integration limit: beyond this distance the integrand
-        # contribution is negligible (thermal diffusion length scale).
-        L_eff = min(L, max(5.0 * math.sqrt(four_alpha_t) / sin_a, 2.0))
+        # Beyond ~5 diffusion lengths the erfc factor is negligible.
+        L_eff = min(L, max(5.0 * two_sqrt_at / sin_a, 2.0))
 
         def integrand(s: float) -> float:
-            r_sq = (s * sin_a) ** 2 + dh ** 2
-            ri_sq = (s * sin_a) ** 2 + h_sum ** 2
-            return float(exp1(r_sq / four_alpha_t) - exp1(ri_sq / four_alpha_t))
+            r = math.sqrt((s * sin_a) ** 2 + dh ** 2)
+            ri = math.sqrt((s * sin_a) ** 2 + h_sum ** 2)
+            return float(
+                erfc(r / two_sqrt_at) / r - erfc(ri / two_sqrt_at) / ri
+            )
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", integrate.IntegrationWarning)

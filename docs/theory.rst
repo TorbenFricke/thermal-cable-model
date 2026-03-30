@@ -245,17 +245,20 @@ cable is:
 The first term is the contribution of the real source; the second term is the
 image correction for the isothermal ground surface.
 
-For transient analysis, the exponential integral E\ :sub:`1` formulation is
-used:
+For transient analysis, each element *ds* of the crossing cable acts as a
+point source, so the 3-D transient Green's function (erfc kernel) is used:
 
 .. math::
 
    \Delta T(t) = \frac{W}{4\pi\lambda}
    \int_{-L}^{L}
    \left[
-       \mathrm{E}_1\!\left(\frac{r^2}{4\alpha t}\right)
-     - \mathrm{E}_1\!\left(\frac{r'^2}{4\alpha t}\right)
+       \frac{\operatorname{erfc}\!\bigl(\frac{r}{2\sqrt{\alpha t}}\bigr)}{r}
+     - \frac{\operatorname{erfc}\!\bigl(\frac{r'}{2\sqrt{\alpha t}}\bigr)}{r'}
    \right] ds
+
+As *t* → ∞ the complementary error function tends to unity, recovering
+the steady-state 1/*r* kernel exactly.
 
 The **derating factor** gives the permissible current reduction:
 

@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from thermal_cable_model.cable import Cable
 from thermal_cable_model.crossing import CableCrossing, crossing_derating_factor
-from thermal_cable_model.ground import KasudaModel
+from thermal_cable_model.ground import ConstantGroundTemperature
 from thermal_cable_model.loads import LoadProfile
 from thermal_cable_model.materials import SOIL_STANDARD
 from thermal_cable_model.simulation import CableInstallation, ThermalSimulation
@@ -79,15 +79,15 @@ def main():
         print(f"  t = {th:6.1f} h  →  ΔT = {dT:.2f} °C")
 
     # ── Common simulation parameters ─────────────────────────────────
-    ground = KasudaModel(mean_surface_temp=12.0, annual_amplitude=10.0)
-    duration_s = 24 * 3600
+    ground = ConstantGroundTemperature(15.0)
+    duration_s = 960 * 3600
     load_mv = LoadProfile.constant(I_mv, duration_s)
     load_lv = LoadProfile.constant(I_lv, duration_s)
 
     # ── Isolated cable simulations ────────────────────────────────────
     # Each cable is simulated alone so the thermal network does not
     # introduce spurious parallel mutual heating between them.
-    print("\nRunning individual cable simulations (24 hours)...")
+    print(f"\nRunning individual cable simulations ({int(duration_s/3600)} hours)...")
 
     inst_mv = CableInstallation(soil=SOIL_STANDARD, ground_temp_model=ground)
     inst_mv.add_cable(mv_cable, x=0.0, depth=depth_upper, load=load_mv)
