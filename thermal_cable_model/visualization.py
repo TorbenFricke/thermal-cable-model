@@ -54,11 +54,17 @@ def plot_temperature_history(
         ax_temp.plot(t, result.conductor_temps[:, ci], color=c,
                      linewidth=1.8, label=f"{label} — conductor")
         ax_temp.plot(t, result.insulation_temps[:, ci], color=c,
-                     linewidth=1.2, linestyle="--", label=f"{label} — insulation")
+                     linewidth=1.4, linestyle="--", label=f"{label} — insulation")
+        ax_temp.plot(t, result.sheath_temps[:, ci], color=c,
+                     linewidth=1.1, linestyle=(0, (5, 2)),
+                     label=f"{label} — sheath")
+        ax_temp.plot(t, result.armour_temps[:, ci], color=c,
+                     linewidth=0.9, linestyle=(0, (3, 2, 1, 2)),
+                     label=f"{label} — armour")
         ax_temp.plot(t, result.surface_temps[:, ci], color=c,
-                     linewidth=1.0, linestyle=":", label=f"{label} — surface")
+                     linewidth=0.8, linestyle=":", label=f"{label} — surface")
         ax_temp.plot(t, result.soil_temps[:, ci], color=c,
-                     linewidth=0.8, linestyle="-.", label=f"{label} — soil")
+                     linewidth=0.7, linestyle="-.", label=f"{label} — soil")
         if show_ambient:
             ax_temp.plot(t, result.ambient_temps[:, ci], color=c,
                          linewidth=0.6, linestyle=(0, (5, 10)),

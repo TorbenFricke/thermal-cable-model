@@ -23,6 +23,8 @@ class TransientResult:
     times: np.ndarray                      # [s]
     conductor_temps: np.ndarray            # (n_steps, n_cables)  [°C]
     insulation_temps: np.ndarray           # (n_steps, n_cables)
+    sheath_temps: np.ndarray               # (n_steps, n_cables)
+    armour_temps: np.ndarray               # (n_steps, n_cables)
     surface_temps: np.ndarray              # (n_steps, n_cables)
     soil_temps: np.ndarray                 # (n_steps, n_cables)
     currents: np.ndarray                   # (n_steps, n_cables)
@@ -43,6 +45,12 @@ class TransientResult:
 
     def max_insulation_temp(self, cable_index: int = 0) -> float:
         return float(np.max(self.insulation_temps[:, cable_index]))
+
+    def max_sheath_temp(self, cable_index: int = 0) -> float:
+        return float(np.max(self.sheath_temps[:, cable_index]))
+
+    def max_armour_temp(self, cable_index: int = 0) -> float:
+        return float(np.max(self.armour_temps[:, cable_index]))
 
 
 class TransientSolver:
@@ -110,20 +118,20 @@ class TransientSolver:
         n_steps = int(duration / dt) + 1
         times = np.linspace(0, duration, n_steps)
 
-        # Storage
-        cond_T = np.zeros((n_steps, net.n_cables))
-        ins_T = np.zeros((n_steps, net.n_cables))
-        surf_T = np.zeros((n_steps, net.n_cables))
-        soil_T = np.zeros((n_steps, net.n_cables))
-        cur_arr = np.zeros((n_steps, net.n_cables))
-        amb_arr = np.zeros((n_steps, net.n_cables))
+        nc = net.n_cables
+        cond_T  = np.zeros((n_steps, nc))
+        ins_T   = np.zeros((n_steps, nc))
+        sh_T    = np.zeros((n_steps, nc))
+        arm_T   = np.zeros((n_steps, nc))
+        surf_T  = np.zeros((n_steps, nc))
+        soil_T  = np.zeros((n_steps, nc))
+        cur_arr = np.zeros((n_steps, nc))
+        amb_arr = np.zeros((n_steps, nc))
         full = np.zeros((n_steps, N)) if store_full_state else None
 
-        # Diagonal capacitance matrix (as vector for efficiency)
         C_diag = net.C.copy()
-        C_diag[C_diag < 1e-12] = 1e-12  # regularise zero-capacitance nodes
+        C_diag[C_diag < 1e-12] = 1e-12
 
-        # Initial condition
         if initial_state is not None:
             theta = initial_state.copy()
         else:
@@ -131,11 +139,10 @@ class TransientSolver:
             cur0 = self._currents(0.0)
             theta = net.steady_state(cur0, amb0)
 
-        # Record t = 0
-        self._record(0, theta, times[0], cond_T, ins_T, surf_T, soil_T,
+        self._record(0, theta, times[0],
+                     cond_T, ins_T, sh_T, arm_T, surf_T, soil_T,
                      cur_arr, amb_arr, full)
 
-        # System matrix  (C/dt + G) — constant if G doesn't change
         A = np.diag(C_diag / dt) + net.G
 
         for step in range(1, n_steps):
@@ -143,7 +150,6 @@ class TransientSolver:
             currents = self._currents(t)
             amb_temps = self._ambient_temps(t)
 
-            # Picard iteration for non-linear R(T)
             theta_pred = theta.copy()
             for _ in range(nonlinear_iterations):
                 cond_temps = net.get_conductor_temperatures(theta_pred)
@@ -152,13 +158,16 @@ class TransientSolver:
                 theta_pred = np.linalg.solve(A, rhs)
 
             theta = theta_pred
-            self._record(step, theta, t, cond_T, ins_T, surf_T, soil_T,
+            self._record(step, theta, t,
+                         cond_T, ins_T, sh_T, arm_T, surf_T, soil_T,
                          cur_arr, amb_arr, full)
 
         return TransientResult(
             times=times,
             conductor_temps=cond_T,
             insulation_temps=ins_T,
+            sheath_temps=sh_T,
+            armour_temps=arm_T,
             surface_temps=surf_T,
             soil_temps=soil_T,
             currents=cur_arr,
@@ -167,11 +176,14 @@ class TransientSolver:
             cable_names=[c.name for c in net.cables],
         )
 
-    def _record(self, step, theta, t, cond_T, ins_T, surf_T, soil_T,
+    def _record(self, step, theta, t,
+                cond_T, ins_T, sh_T, arm_T, surf_T, soil_T,
                 cur_arr, amb_arr, full):
         net = self.net
         cond_T[step] = net.get_conductor_temperatures(theta)
-        ins_T[step] = net.get_insulation_temperatures(theta)
+        ins_T[step]  = net.get_insulation_temperatures(theta)
+        sh_T[step]   = net.get_sheath_temperatures(theta)
+        arm_T[step]  = net.get_armour_temperatures(theta)
         surf_T[step] = net.get_surface_temperatures(theta)
         soil_T[step] = net.get_soil_temperatures(theta)
         cur_arr[step] = self._currents(t)

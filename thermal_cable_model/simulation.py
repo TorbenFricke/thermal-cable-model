@@ -145,6 +145,8 @@ class ThermalSimulation:
             times=np.array([time_s]),
             conductor_temps=np.array([self.network.get_conductor_temperatures(theta)]),
             insulation_temps=np.array([self.network.get_insulation_temperatures(theta)]),
+            sheath_temps=np.array([self.network.get_sheath_temperatures(theta)]),
+            armour_temps=np.array([self.network.get_armour_temperatures(theta)]),
             surface_temps=np.array([self.network.get_surface_temperatures(theta)]),
             soil_temps=np.array([self.network.get_soil_temperatures(theta)]),
             currents=np.array([currents]),

@@ -92,9 +92,9 @@ Built-in plotting functions create publication-ready figures:
    fig = plot_temperature_history(result, time_unit="hours")
    fig.savefig("my_cable_temperatures.png", dpi=150)
 
-The :func:`~thermal_cable_model.plot_temperature_history` function shows conductor,
-insulation, surface, and soil node temperatures on one axis with an optional
-current panel below.
+The :func:`~thermal_cable_model.plot_temperature_history` function shows
+conductor, insulation, sheath, armour, surface, and soil node temperatures
+on one axis with an optional current panel below.
 
 What next?
 ----------

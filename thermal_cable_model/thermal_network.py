@@ -56,21 +56,33 @@ class InternalThermalResistances:
 class InternalThermalCapacitances:
     """Per-unit-length thermal capacitances [J/(m·K)]."""
     Q_conductor: float
-    Q_insulation: float  # includes screen
+    Q_insulation: float
+    Q_sheath: float
     Q_bedding: float
-    Q_armour: float
     Q_jacket: float
 
     @classmethod
     def from_cable(cls, cable: Cable) -> InternalThermalCapacitances:
         caps = [l.thermal_capacitance_per_length for l in cable.layers]
         q_c = cable.conductor_capacitance_per_length
+        if len(caps) == 0:
+            return cls(Q_conductor=q_c, Q_insulation=0.0,
+                       Q_sheath=0.0, Q_bedding=0.0, Q_jacket=0.0)
+        if len(caps) == 1:
+            return cls(Q_conductor=q_c, Q_insulation=caps[0],
+                       Q_sheath=0.0, Q_bedding=0.0, Q_jacket=0.0)
+        if len(caps) == 2:
+            return cls(Q_conductor=q_c, Q_insulation=caps[0],
+                       Q_sheath=0.0, Q_bedding=0.0, Q_jacket=caps[1])
+        if len(caps) == 3:
+            return cls(Q_conductor=q_c, Q_insulation=caps[0],
+                       Q_sheath=caps[1], Q_bedding=0.0, Q_jacket=caps[2])
         return cls(
             Q_conductor=q_c,
-            Q_insulation=caps[0] if len(caps) > 0 else 0.0,
-            Q_bedding=sum(caps[1:-1]) if len(caps) > 2 else 0.0,
-            Q_armour=0.0,
-            Q_jacket=caps[-1] if len(caps) > 1 else 0.0,
+            Q_insulation=caps[0],
+            Q_sheath=caps[1],
+            Q_bedding=sum(caps[2:-1]),
+            Q_jacket=caps[-1],
         )
 
 
@@ -140,26 +152,31 @@ def mutual_heating_resistance(
 class CableThermalNetwork:
     """State-space thermal circuit for one or more parallel cables.
 
-    For *N* cables the state vector has *N × M* entries where *M* is the
-    number of thermal nodes per cable (conductor, insulation-midpoint,
-    screen/sheath, jacket-surface).  The network is represented as
+    For *N* cables the state vector has *N × 6* entries.  The network is
+    represented as
 
         C · dθ/dt + G · θ = P(t)
 
     where C is the (diagonal) capacitance matrix, G the conductance matrix,
     and P the forcing vector (heat sources + boundary coupling).
 
-    Nodes per cable (4-node model)
+    Nodes per cable (6-node model)
     ──────────────────────────────
     0 : conductor            θ_c
-    1 : insulation mid-point θ_i
-    2 : cable surface        θ_s  (outer jacket)
-    3 : soil node            θ_soil (near cable)
+    1 : insulation mid-point θ_i   (Van Wormer split of T1)
+    2 : sheath / screen      θ_sh  (boundary between T1 and T2)
+    3 : armour               θ_a   (boundary between T2 and T3)
+    4 : cable surface        θ_s   (outer jacket)
+    5 : soil node            θ_soil (near cable)
 
-    Coupling to ambient (ground temperature) is through T4 from node 3.
+    Thermal resistance chain::
+
+        θ_c ─[p·T1]─ θ_i ─[(1−p)·T1]─ θ_sh ─[T2]─ θ_a ─[T3]─ θ_s ─[T4/2]─ θ_soil ─[T4/2]─ T_amb
+
+    Coupling to ambient (ground temperature) is through T4 from node 5.
     """
 
-    NODES_PER_CABLE = 4
+    NODES_PER_CABLE = 6
 
     def __init__(
         self,
@@ -180,67 +197,96 @@ class CableThermalNetwork:
         N = self.n_nodes
         self.C = np.zeros(N)       # diagonal capacitance
         self.G = np.zeros((N, N))  # conductance matrix
-        # which node indices are "conductor" / "surface" / "soil"
+
         self._conductor_idx = []
         self._insulation_idx = []
+        self._sheath_idx = []
+        self._armour_idx = []
         self._surface_idx = []
         self._soil_idx = []
 
         for k, cable in enumerate(self.cables):
             i0 = k * self.NODES_PER_CABLE
-            ic, ii, is_, ig = i0, i0 + 1, i0 + 2, i0 + 3
+            ic  = i0      # conductor
+            ii  = i0 + 1  # insulation midpoint
+            ish = i0 + 2  # sheath / screen
+            ia  = i0 + 3  # armour
+            is_ = i0 + 4  # cable surface
+            ig  = i0 + 5  # soil
 
             self._conductor_idx.append(ic)
             self._insulation_idx.append(ii)
+            self._sheath_idx.append(ish)
+            self._armour_idx.append(ia)
             self._surface_idx.append(is_)
             self._soil_idx.append(ig)
 
             tr = InternalThermalResistances.from_cable(cable)
             tc = InternalThermalCapacitances.from_cable(cable)
 
-            # Van-Wormer coefficients for splitting resistances
-            p1 = _van_wormer(cable.layers[0]) if cable.layers else 0.5
-            T1 = tr.T1 / cable.n_conductors if cable.n_conductors > 0 else tr.T1
+            n = cable.n_conductors if cable.n_conductors > 0 else 1
 
-            T_inner = p1 * T1          # conductor → insulation mid
-            T_outer = (1.0 - p1) * T1  # insulation mid → screen
-            T23 = (tr.T2 + tr.T3) / cable.n_conductors if cable.n_conductors > 0 else (tr.T2 + tr.T3)
+            p1 = _van_wormer(cable.layers[0]) if cable.layers else 0.5
+            T1 = tr.T1 / n
+            T2 = tr.T2 / n
+            T3 = tr.T3 / n
             T4 = external_thermal_resistance(
                 self.depths[k], cable.outer_radius, self.soil
             )
 
-            # Conductances (G_ij = 1 / R_ij)
-            g_c_i = 1.0 / max(T_inner, 1e-12)
-            g_i_s = 1.0 / max(T_outer + T23, 1e-12)
-            g_s_g = 1.0 / max(T4 * 0.5, 1e-12)
+            R_c_i  = p1 * T1              # conductor → insulation mid
+            R_i_sh = (1.0 - p1) * T1      # insulation mid → sheath
+            R_sh_a = T2                    # sheath → armour
+            R_a_s  = T3                    # armour → surface
+            R_s_g  = T4 * 0.5             # surface → soil
 
-            self.G[ic, ic] += g_c_i
-            self.G[ic, ii] -= g_c_i
-            self.G[ii, ic] -= g_c_i
-            self.G[ii, ii] += g_c_i + g_i_s
-            self.G[ii, is_] -= g_i_s
-            self.G[is_, ii] -= g_i_s
-            self.G[is_, is_] += g_i_s + g_s_g
-            self.G[is_, ig] -= g_s_g
-            self.G[ig, is_] -= g_s_g
-            self.G[ig, ig] += g_s_g
+            # Conductances (G_ij = 1 / R_ij)
+            g_c_i  = 1.0 / max(R_c_i,  1e-12)
+            g_i_sh = 1.0 / max(R_i_sh, 1e-12)
+            g_sh_a = 1.0 / max(R_sh_a, 1e-12)
+            g_a_s  = 1.0 / max(R_a_s,  1e-12)
+            g_s_g  = 1.0 / max(R_s_g,  1e-12)
+
+            # conductor ↔ insulation midpoint
+            self.G[ic, ic]   += g_c_i
+            self.G[ic, ii]   -= g_c_i
+            self.G[ii, ic]   -= g_c_i
+            self.G[ii, ii]   += g_c_i + g_i_sh
+
+            # insulation midpoint ↔ sheath
+            self.G[ii, ish]  -= g_i_sh
+            self.G[ish, ii]  -= g_i_sh
+            self.G[ish, ish] += g_i_sh + g_sh_a
+
+            # sheath ↔ armour
+            self.G[ish, ia]  -= g_sh_a
+            self.G[ia, ish]  -= g_sh_a
+            self.G[ia, ia]   += g_sh_a + g_a_s
+
+            # armour ↔ surface
+            self.G[ia, is_]  -= g_a_s
+            self.G[is_, ia]  -= g_a_s
+            self.G[is_, is_] += g_a_s + g_s_g
+
+            # surface ↔ soil
+            self.G[is_, ig]  -= g_s_g
+            self.G[ig, is_]  -= g_s_g
+            self.G[ig, ig]   += g_s_g
 
             # Capacitances
-            self.C[ic] = tc.Q_conductor * cable.n_conductors
-            self.C[ii] = tc.Q_insulation * cable.n_conductors
-            self.C[is_] = tc.Q_jacket + tc.Q_bedding
-            # Soil node capacitance — effective soil annulus
-            r_out_soil = min(self.depths[k], 0.5)  # up to 0.5 m annulus
+            self.C[ic]  = tc.Q_conductor * n
+            self.C[ii]  = tc.Q_insulation * n
+            self.C[ish] = tc.Q_sheath
+            self.C[ia]  = tc.Q_bedding
+            self.C[is_] = tc.Q_jacket
+            r_out_soil = min(self.depths[k], 0.5)
             r_in_soil = cable.outer_radius
             self.C[ig] = (
                 self.soil.volumetric_heat_capacity
                 * math.pi * (r_out_soil ** 2 - r_in_soil ** 2)
             )
 
-        # Mutual heating resistance matrix (IEC 60287 image method).
-        # Rm[i][j] = temperature rise at cable i per unit heat from cable j.
-        # Used in the forcing vector to raise the effective ambient
-        # temperature seen by each cable's soil node.
+        # Mutual heating resistance matrix (IEC 60287 image method)
         self._Rm = np.zeros((self.n_cables, self.n_cables))
         for i in range(self.n_cables):
             for j in range(self.n_cables):
@@ -279,31 +325,31 @@ class CableThermalNetwork:
         """
         P = np.zeros(self.n_nodes)
 
-        # Total heat per cable (needed for mutual heating calculation)
         W_total = np.array([
             cable.total_heat_per_length(currents[k], conductor_temps[k])
             for k, cable in enumerate(self.cables)
         ])
 
         for k, cable in enumerate(self.cables):
-            ic = self._conductor_idx[k]
+            ic  = self._conductor_idx[k]
+            ii  = self._insulation_idx[k]
+            ish = self._sheath_idx[k]
+            ia  = self._armour_idx[k]
+
             Wc = cable.n_conductors * cable.conductor_loss(
                 currents[k], conductor_temps[k]
             )
             Wd = cable.n_conductors * cable.dielectric_loss
-            P[ic] += Wc
-            ii = self._insulation_idx[k]
+            P[ic] += Wc + Wd * 0.5
             P[ii] += Wd * 0.5
-            P[ic] += Wd * 0.5
 
-            # Sheath + armour losses attributed to surface node
-            Ws = Wc * cable.loss_factor_sheath * cable.n_conductors
-            Wa = Wc * cable.loss_factor_armour * cable.n_conductors
-            is_ = self._surface_idx[k]
-            P[is_] += Ws + Wa
+            # Sheath losses at the sheath node, armour losses at the armour node
+            Ws = Wc * cable.loss_factor_sheath
+            Wa = Wc * cable.loss_factor_armour
+            P[ish] += Ws
+            P[ia]  += Wa
 
-            # Mutual heating: raise effective ambient by ΔT_mutual_k
-            # per IEC 60287: ΔT_k = Σ_{j≠k} W_j × Rm[k,j]
+            # Mutual heating
             delta_T_mutual = float(self._Rm[k, :] @ W_total)
             ig = self._soil_idx[k]
             P[ig] += self._g_ambient[ig] * (ambient_temps[k] + delta_T_mutual)
@@ -338,6 +384,12 @@ class CableThermalNetwork:
 
     def get_insulation_temperatures(self, theta: np.ndarray) -> list[float]:
         return [float(theta[i]) for i in self._insulation_idx]
+
+    def get_sheath_temperatures(self, theta: np.ndarray) -> list[float]:
+        return [float(theta[i]) for i in self._sheath_idx]
+
+    def get_armour_temperatures(self, theta: np.ndarray) -> list[float]:
+        return [float(theta[i]) for i in self._armour_idx]
 
     def get_surface_temperatures(self, theta: np.ndarray) -> list[float]:
         return [float(theta[i]) for i in self._surface_idx]

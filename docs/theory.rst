@@ -7,12 +7,12 @@ in Thermal Cable Model.  For full details, consult the referenced standards.
 Cable thermal network (IEC 60287 / IEC 60853)
 ----------------------------------------------
 
-Each cable is represented as a lumped-parameter thermal circuit with four
+Each cable is represented as a lumped-parameter thermal circuit with six
 nodes per cable:
 
 .. list-table::
    :header-rows: 1
-   :widths: 15 25 60
+   :widths: 10 20 70
 
    * - Node
      - Symbol
@@ -22,17 +22,80 @@ nodes per cable:
      - Conductor temperature
    * - 1
      - θ\ :sub:`i`
-     - Insulation midpoint temperature
+     - Insulation midpoint (Van Wormer split of T1)
    * - 2
+     - θ\ :sub:`sh`
+     - Sheath / screen temperature (boundary between T1 and T2)
+   * - 3
+     - θ\ :sub:`a`
+     - Armour temperature (boundary between T2 and T3)
+   * - 4
      - θ\ :sub:`s`
      - Cable surface (outer jacket) temperature
-   * - 3
+   * - 5
      - θ\ :sub:`soil`
      - Near-cable soil node temperature
 
-The thermal resistances between nodes correspond to:
+The steady-state conductor temperature rise above ambient is the sum of
+the temperature drops across all resistances in the chain (IEC 60287-1-1):
 
-- **T1** — insulation thermal resistance (IEC 60287-2-1, cylindrical layer)
+.. math::
+
+   \theta_c - T_\text{amb}
+   = \bigl(W_c + \tfrac{1}{2}\,W_d\bigr)\,T_1
+   + \bigl[W_c\,(1+\lambda_1) + W_d\bigr]\,T_2
+   + \bigl[W_c\,(1+\lambda_1+\lambda_2) + W_d\bigr]\,T_3
+   + n\,\bigl[W_c\,(1+\lambda_1+\lambda_2) + W_d\bigr]\,T_4
+
+where:
+
+- *n* — number of load-carrying conductors (cores) in the cable
+- *W*\ :sub:`c` = *I*\ ² · *R*\ :sub:`ac`\ (*T*) — AC conductor loss per
+  conductor [W/m]
+- *W*\ :sub:`d` — dielectric loss per conductor [W/m]
+- *T*\ :sub:`1`, *T*\ :sub:`2`, *T*\ :sub:`3` — internal thermal
+  resistances (insulation, bedding, jacket) per cable [K·m/W]
+- *T*\ :sub:`4` — external soil thermal resistance per cable [K·m/W]
+- λ\ :sub:`1`, λ\ :sub:`2` — sheath and armour loss factors (ratio of
+  sheath/armour losses to conductor losses, per conductor)
+
+The factor *n* appears only on the *T*\ :sub:`4` term because all *n*
+conductors share a single external thermal path.  In the internal
+resistances *T*\ :sub:`1` – *T*\ :sub:`3`, each conductor has its own
+parallel path, so the per-conductor and per-cable factors cancel.
+
+In the transient model, these resistances are resolved as individual
+branches in a six-node thermal circuit.  The resistance between each pair
+of adjacent nodes is:
+
+.. math::
+
+   \begin{aligned}
+   R_{0 \to 1} &= p \;\frac{T_1}{n}
+       & &\text{(conductor → insulation midpoint)} \\[4pt]
+   R_{1 \to 2} &= (1 - p)\;\frac{T_1}{n}
+       & &\text{(insulation midpoint → sheath)} \\[4pt]
+   R_{2 \to 3} &= \frac{T_2}{n}
+       & &\text{(sheath → armour)} \\[4pt]
+   R_{3 \to 4} &= \frac{T_3}{n}
+       & &\text{(armour → surface)} \\[4pt]
+   R_{4 \to 5} &= \tfrac{1}{2}\,T_4
+       & &\text{(surface → soil node)} \\[4pt]
+   R_{5 \to \text{amb}} &= \tfrac{1}{2}\,T_4
+       & &\text{(soil node → ambient)}
+   \end{aligned}
+
+where *p* is the **Van Wormer coefficient** that splits the insulation
+resistance T1 so that a thermal capacitance node can be placed at the
+optimal intermediate point.
+
+Each resistance occupies its own branch in the circuit, so the transient
+response correctly captures the distinct thermal time constants of the
+insulation, bedding, and jacket layers.
+
+The thermal resistances are:
+
+- **T1** — insulation (IEC 60287-2-1, cylindrical layer)
 - **T2** — bedding between insulation screen and armour
 - **T3** — outer serving / jacket
 - **T4** — external soil thermal resistance (image method)
@@ -49,12 +112,29 @@ For a cylindrical layer with inner radius *r*\ :sub:`1` and outer radius
 
 where ρ\ :sub:`th` is the material's thermal resistivity [(K·m)/W].
 
-The Van Wormer coefficient splits each resistance into two parts for the
-capacitance allocation:
+Van Wormer coefficient
+~~~~~~~~~~~~~~~~~~~~~~
+
+The Van Wormer coefficient *p* determines where to split the insulation
+resistance T1 to place the capacitance node.  For a cylindrical layer with
+radius ratio *r*\ :sub:`2` / *r*\ :sub:`1`:
 
 .. math::
 
-   p = \frac{1}{2\ln(r_2/r_1)} - \frac{1}{(r_2/r_1)^2 - 1}
+   p = \frac{1}{2\,\ln(r_2 / r_1)}
+     - \frac{1}{(r_2 / r_1)^2 - 1}
+
+The value of *p* is always in the range [0, 0.5].  For thin layers
+(*r*\ :sub:`2` ≈ *r*\ :sub:`1`) it approaches 0.5, placing the node at the
+midpoint.  For thick insulation layers (typical of MV cables), *p* is
+smaller, shifting the node closer to the conductor where the thermal
+gradient is steepest.
+
+The inner portion of the resistance (*p* · T1) carries the conductor heat
+flux, while the outer portion ((1 − *p*) · T1) connects to the sheath.
+This splitting ensures that the lumped-parameter model reproduces the
+correct thermal time constant of the insulation layer as derived in
+IEC 60853-2.
 
 External thermal resistance T4
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,8 +159,14 @@ Thermal capacitance per unit length for a cylindrical layer:
 
    Q = \rho_m c_p \cdot \pi (r_2^2 - r_1^2)
 
-Capacitances are allocated to the four circuit nodes using the Van Wormer
-splitting described above.
+Capacitances are allocated to the six circuit nodes:
+
+- **Node 0** (conductor): conductor thermal mass
+- **Node 1** (insulation midpoint): insulation layer capacitance
+- **Node 2** (sheath): screen / sheath layer capacitance
+- **Node 3** (armour): bedding and armour layer capacitance
+- **Node 4** (surface): jacket layer capacitance
+- **Node 5** (soil): effective soil annulus around the cable
 
 Mutual heating (image method)
 -----------------------------
