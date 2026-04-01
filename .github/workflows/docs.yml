@@ -1,4 +1,10 @@
-# Build Sphinx HTML and deploy to GitHub Pages (Settings → Pages → Source: GitHub Actions).
+# Build Sphinx HTML and deploy to GitHub Pages.
+#
+# One-time setup (otherwise deploy-pages fails with HttpError 404):
+#   Settings → Pages → Build and deployment → Source: "GitHub Actions"
+# Private repos need a paid GitHub plan for Pages (or make the repo public).
+# Forks: enable Pages on your fork the same way; upstream settings do not apply.
+#
 name: Deploy documentation
 
 on:

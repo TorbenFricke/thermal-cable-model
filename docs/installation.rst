@@ -51,6 +51,25 @@ The documentation uses `Sphinx <https://www.sphinx-doc.org>`_ with the
 
 The built HTML pages are in ``docs/_build/html/``.
 
+GitHub Pages (CI deploy)
+-------------------------
+
+The repository includes a workflow that builds Sphinx and deploys with
+``actions/deploy-pages``. **You must enable Pages once** in the GitHub UI or
+deployment returns ``404`` / "Creating Pages deployment failed":
+
+1. Open **Settings → Pages** for the repository.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions** (not
+   "Deploy from a branch").
+3. Re-run the failed workflow (**Actions → Deploy documentation → Re-run jobs**).
+
+**Private repositories:** GitHub Pages for private repos requires a **paid**
+plan (e.g. GitHub Pro for personal accounts). On a free account, make the
+repository **public** or host docs elsewhere (e.g. Read the Docs).
+
+The site URL is ``https://<owner>.github.io/<repo>/``; ``SPHINX_HTML_BASEURL`` in
+the workflow matches this for canonical links.
+
 Verifying the installation
 --------------------------
 

@@ -2,6 +2,8 @@
 
 Cable temperature rating model for buried LV and MV power cables.
 
+**Documentation:** [https://torbenfricke.github.io/thermal-cable-model/](https://torbenfricke.github.io/thermal-cable-model/) — installation, user guide, examples, theory, and API reference.
+
 ## Features
 
 - Dynamic load profiles (constant, cyclic, daily patterns, CSV import)
