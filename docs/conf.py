@@ -1,5 +1,7 @@
 """Sphinx configuration for Thermal Cable Model documentation."""
 
+import os
+
 project = "Thermal Cable Model"
 copyright = "2025, Thermal Cable Model Contributors"
 author = "Thermal Cable Model Contributors"
@@ -22,6 +24,10 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_title = "Thermal Cable Model"
 html_short_title = "Thermal Cable Model"
+
+# Set by GitHub Actions for GitHub Pages project sites (canonical URLs, sitemap).
+_base_url = os.environ.get("SPHINX_HTML_BASEURL", "").strip()
+html_baseurl = _base_url.rstrip("/") + "/" if _base_url else ""
 
 autodoc_member_order = "bysource"
 autodoc_typehints = "description"
